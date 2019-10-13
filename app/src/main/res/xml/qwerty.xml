@@ -9,14 +9,14 @@
         <Key android:keyLabel="O O"
             android:keyEdgeFlags="left"
             android:codes="0"/>
-        <Key android:keyLabel="O X"
+        <Key android:keyLabel="X X"
             android:keyEdgeFlags="right"
-            android:codes="1"/>
+            android:codes="3"/>
     </Row>
 
     <Row android:rowEdgeFlags="bottom">
         <Key android:keyLabel="X O" android:keyEdgeFlags="left" android:codes="2"/>
-        <Key android:keyLabel="X X" android:keyEdgeFlags="right" android:codes="3"/>
+        <Key android:keyLabel="O X" android:keyEdgeFlags="right" android:codes="1"/>
 
     </Row>
 

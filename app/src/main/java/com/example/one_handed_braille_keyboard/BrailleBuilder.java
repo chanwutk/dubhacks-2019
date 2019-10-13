@@ -1,17 +1,27 @@
+package com.example.one_handed_braille_keyboard;
+
+import android.content.Context;
+
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import com.opencsv.CSVReader;
+
+
 public class BrailleBuilder {
     private int value;
-    private int counter;
+    public int counter;
     Map<Integer, String> keyMap;
 
-    public BrailleBuilder () {
-        try{
-            CSVReader reader = new CSVReader(new InputStreamReader(getResources().openRawResource(R.values.braille-eng.csv)));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] row = line.split(",");
-                keyMap[Integer.parseInt(row[1])] = row[0]; 
+    public BrailleBuilder (Context context) {
+        this.keyMap = new HashMap<Integer, String>();
+        try {
+            CSVReader reader = new CSVReader(new InputStreamReader(context.getResources().openRawResource(R.raw.braille_eng)));
+            String[] line;
+            while ((line = reader.readNext()) != null) {
+                keyMap.put(Integer.parseInt(line[1]), line[0]);
             }
-        }catch(Exception e){
+        } catch(Exception e){
             e.printStackTrace();
         }
         value = 0;
@@ -19,12 +29,11 @@ public class BrailleBuilder {
     }
 
     public boolean isReady() {
-        return this.counter % 3 == 0 && this.getChar() != '\0';
+        return this.counter % 3 == 0 && (this.getChar() == null || !this.getChar().isEmpty());
     }
 
     public String getChar() {
-        assert(this.counter % 3 == 0);
-        return keyMap.get(value);  // null not found, '\0' need another block
+        return this.keyMap.get(this.value);  // null not found, '\0' need another block
     }
 
     public void reset() {
@@ -33,8 +42,7 @@ public class BrailleBuilder {
     }
 
     public void input(int in) {
-        assert(!this.isReady());
         value = 4 * value + in;
-        counter++;
+        this.counter++;
     }
 }
