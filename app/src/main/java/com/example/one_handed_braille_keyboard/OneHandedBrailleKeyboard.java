@@ -7,6 +7,7 @@ import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.speech.tts.TextToSpeech;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -16,6 +17,7 @@ import com.opencsv.CSVReader;
 
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class OneHandedBrailleKeyboard extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
@@ -26,9 +28,18 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
     private int pressedButton;
     private Map<Integer, Integer> gestureMap;
     private Vibrator vibrator;
+    private TextToSpeech tts;
 
     @Override
     public View onCreateInputView() {
+        this.tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+
+            }
+        });
+        this.tts.setLanguage(Locale.US);
+
         this.gestureMap = this.readGestureMap();
         this.vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         kv = (KeyboardView)getLayoutInflater().inflate(R.layout.keyboard,null);
@@ -84,6 +95,7 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
                         braillebuilder.reset();
                     }
                 } else {
+                    this.tts.speak(key, TextToSpeech.QUEUE_FLUSH, null);
                     ic.commitText(key,1);
                     braillebuilder.reset();
                 }
@@ -96,12 +108,15 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
         if (gesture != null) {
             switch (gesture.intValue()) {
                 case 0:
+                    this.tts.speak("space", TextToSpeech.QUEUE_FLUSH, null);
                     ic.commitText(" ",1);
                     break;
                 case 1:
+                    this.tts.speak("delete", TextToSpeech.QUEUE_FLUSH, null);
                     ic.deleteSurroundingText(1,0);
                     break;
                 case 2:
+                    this.tts.speak("enter", TextToSpeech.QUEUE_FLUSH, null);
                     ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
                     break;
                 case 3:
