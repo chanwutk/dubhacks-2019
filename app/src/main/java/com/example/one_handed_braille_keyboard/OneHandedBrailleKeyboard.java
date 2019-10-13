@@ -17,6 +17,7 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
     @Override
     public View onCreateInputView() {
         kv = (KeyboardView)getLayoutInflater().inflate(R.layout.keyboard,null);
+        kv.setPreviewEnabled(false);
         keyboard = new Keyboard(this,R.xml.qwerty);
         kv.setKeyboard(keyboard);
         kv.setOnKeyboardActionListener(this);
