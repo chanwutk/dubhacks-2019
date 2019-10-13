@@ -6,11 +6,13 @@ import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
+import BrailleBuilder;
 
 public class OneHandedBrailleKeyboard extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
 
     private KeyboardView kv;
     private Keyboard keyboard;
+    private BrailleBuilder braillebuilder;
 
     @Override
     public View onCreateInputView() {
@@ -19,6 +21,7 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
         keyboard = new Keyboard(this,R.xml.qwerty);
         kv.setKeyboard(keyboard);
         kv.setOnKeyboardActionListener(this);
+        braillebuilder = new BrailleBuilder();
         return kv;
     }
 
@@ -30,7 +33,17 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
     public void onRelease(int i) {
         InputConnection ic = getCurrentInputConnection();
         playClick(i);
-        ic.commitText(String.valueOf((i + "").charAt(0)),1);
+        braillebuilder.input(i);
+        if (braillebuilder.ready()) {
+            String key = braillebuilder.getChar();
+            if (key == null) {
+                // vibrate
+
+            } else {
+                ic.commitText(key,1);
+            }
+            braillebuilder.reset();
+        }
     }
 
     @Override
