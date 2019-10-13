@@ -24,7 +24,6 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
     private Keyboard keyboard;
     private BrailleBuilder braillebuilder;
     private int pressedButton;
-    private boolean isShifted;
     private Map<Integer, Integer> gestureMap;
     private Vibrator vibrator;
 
@@ -64,8 +63,6 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
     @Override
     public void onPress(int primaryCode) {
         this.pressedButton = primaryCode;
-//        InputConnection ic = getCurrentInputConnection();
-//        ic.commitText("p: " + primaryCode,1);
         this.vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
     }
 
@@ -80,11 +77,16 @@ public class OneHandedBrailleKeyboard extends InputMethodService implements Keyb
             if (braillebuilder.isReady()) {
                 String key = braillebuilder.getChar();
                 if (key == null) {
-                    // vibrate
+                    if (this.braillebuilder.getCounter() == 3) {
+                        this.vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        this.vibrator.vibrate(VibrationEffect.createOneShot(750, VibrationEffect.DEFAULT_AMPLITUDE));
+                        braillebuilder.reset();
+                    }
                 } else {
                     ic.commitText(key,1);
+                    braillebuilder.reset();
                 }
-                braillebuilder.reset();
             }
         }
     }

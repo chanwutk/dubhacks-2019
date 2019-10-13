@@ -10,7 +10,7 @@ import com.opencsv.CSVReader;
 
 public class BrailleBuilder {
     private int value;
-    public int counter;
+    private int counter;
     Map<Integer, String> keyMap;
 
     public BrailleBuilder (Context context) {
@@ -26,6 +26,10 @@ public class BrailleBuilder {
         }
         value = 0;
         counter = 0;
+    }
+
+    public int getCounter() {
+        return this.counter;
     }
 
     public boolean isReady() {
